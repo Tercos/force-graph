@@ -37,6 +37,7 @@ export default Kapsule({
     dagMode: { onChange(dagMode, state) { // td, bu, lr, rl, radialin, radialout
       !dagMode && (state.graphData.nodes || []).forEach(n => n.fx = n.fy = undefined); // unfix nodes when disabling dag mode
     }},
+    dagNodeSortingOrder: {default: 'depthFirst'},
     dagLevelDistance: {},
     dagNodeFilter: { default: node => true },
     onDagError: { triggerUpdate: false },
@@ -499,7 +500,8 @@ export default Kapsule({
       node => node[state.nodeId],
       {
         nodeFilter: state.dagNodeFilter,
-        onLoopError: state.onDagError || undefined
+        onLoopError: state.onDagError || undefined,
+        dagNodeSortingOrder: state.dagNodeSortingOrder
       }
     );
     const maxDepth = Math.max(...Object.values(nodeDepths || []));

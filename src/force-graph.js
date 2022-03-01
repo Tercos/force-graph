@@ -37,6 +37,7 @@ const linkedProps = Object.assign(
     'linkDirectionalParticleWidth',
     'linkDirectionalParticleColor',
     'dagMode',
+    'dagNodeSortingOrder',
     'dagLevelDistance',
     'dagNodeFilter',
     'onDagError',

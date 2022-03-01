@@ -1,11 +1,21 @@
 export default function({ nodes, links }, idAccessor, {
   nodeFilter = () => true,
-  onLoopError = loopIds => { throw `Invalid DAG structure! Found cycle in node path: ${loopIds.join(' -> ')}.` }
+  onLoopError = loopIds => { throw `Invalid DAG structure! Found cycle in node path: ${loopIds.join(' -> ')}.` },
+  dagNodeSortingOrder = 'depthFirst'
 } = {}) {
   // linked graph
   const graph = {};
+  const rootCandidates = {}
 
-  nodes.forEach(node => graph[idAccessor(node)] = { data: node, out : [], depth: -1, skip: !nodeFilter(node) });
+  nodes.forEach(node => {
+    rootCandidates[idAccessor(node)] = idAccessor(node)
+    graph[idAccessor(node)] = {
+      data: node,
+      out : [],
+      depth: -1,
+      skip: !nodeFilter(node)
+    }
+  });
   links.forEach(({ source, target }) => {
     const sourceId = getNodeId(source);
     const targetId = getNodeId(target);
@@ -15,6 +25,7 @@ export default function({ nodes, links }, idAccessor, {
     const targetNode = graph[targetId];
 
     sourceNode.out.push(targetNode);
+    delete rootCandidates[targetId]
 
     function getNodeId(node) {
       return typeof node === 'object' ? idAccessor(node) : node;
@@ -22,7 +33,14 @@ export default function({ nodes, links }, idAccessor, {
   });
 
   const foundLoops = [];
-  traverse(Object.values(graph));
+  const rootNodes = Object.values(rootCandidates)
+  if (dagNodeSortingOrder == 'depthFirst') {
+    traverseDepthFirst(rootNodes);
+  } else if(dagNodeSortingOrder == 'depthFirst') {
+    traverseBreadthFirst(rootNodes)
+  } else {
+    throw `Unsupported dagNodeSortingOrder: ${dagNodeSortingOrder}`
+  }
 
   const nodeDepths = Object.assign({}, ...Object.entries(graph)
     .filter(([, node]) => !node.skip)
@@ -31,21 +49,48 @@ export default function({ nodes, links }, idAccessor, {
 
   return nodeDepths;
 
-  function traverse(nodes, nodeStack = [], currentDepth = 0) {
+  function traverseDepthFirst(nodes, nodeStack = [], currentDepth = 0) {
     for (let i=0, l=nodes.length; i<l; i++) {
       const node = nodes[i];
-      if (nodeStack.indexOf(node) !== -1) {
-        const loop = [...nodeStack.slice(nodeStack.indexOf(node)), node].map(d => idAccessor(d.data));
-        if (!foundLoops.some(foundLoop => foundLoop.length === loop.length && foundLoop.every((id, idx) => id === loop[idx]))) {
-          foundLoops.push(loop);
-          onLoopError(loop);
-        }
+
+      if (nodeAlreadyVisited(node, nodeStack, foundLoops)) {
         continue;
       }
+
       if (currentDepth > node.depth) { // Don't unnecessarily revisit chunks of the graph
         node.depth = currentDepth;
-        traverse(node.out, [...nodeStack, node], currentDepth + (node.skip ? 0 : 1));
+        traverseDepthFirst(node.out, [...nodeStack, node], currentDepth + (node.skip ? 0 : 1));
       }
     }
+  }
+
+  function traverseBreadthFirst(nodes, nodeStack = [], currentDepth = 0) {
+    for (let i=0, l=nodes.length; i<l; i++) {
+      const node = nodes[i];
+
+      if (node.depth === -1) {
+        node.depth = currentDepth;
+      } else if (node.depth > currentDepth) {
+        node.depth = currentDepth;
+      }
+
+      if (nodeAlreadyVisited(node, nodeStack, foundLoops)) {
+        continue;
+      }
+
+      traverseBreadthFirst(node.out, [...nodeStack, node], currentDepth + (node.skip ? 0 : 1));
+    }
+  }
+
+  function nodeAlreadyVisited(node, nodeStack, foundLoops) {
+    if (nodeStack.indexOf(node) !== -1) {
+      const loop = [...nodeStack.slice(nodeStack.indexOf(node)), node].map(d => idAccessor(d.data));
+      if (!foundLoops.some(foundLoop => foundLoop.length === loop.length && foundLoop.every((id, idx) => id === loop[idx]))) {
+        foundLoops.push(loop);
+        onLoopError(loop);
+      }
+      return true;
+    }
+    return false;
   }
 }

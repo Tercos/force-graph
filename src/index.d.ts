@@ -27,6 +27,7 @@ type CanvasCustomRenderFn<T> = (obj: T, canvasContext: CanvasRenderingContext2D,
 type CanvasPointerAreaPaintFn<T> = (obj: T, paintColor: string, canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 
 type DagMode = 'td' | 'bu' | 'lr' | 'rl' | 'radialout' | 'radialin';
+type DagNodeSortingOrder = 'depthFirst' | 'breadthFirst';
 
 interface ForceFn {
   (alpha: number): void;
@@ -134,6 +135,8 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   // Force engine (d3-force) configuration
   dagMode(): DagMode;
   dagMode(mode: DagMode): ChainableInstance;
+  dagNodeSortingOrder(): DagNodeSortingOrder;
+  dagNodeSortingOrder(dagNodeSortingOrder: DagNodeSortingOrder): ChainableInstance;
   dagLevelDistance(): number | null;
   dagLevelDistance(distance: number): ChainableInstance;
   dagNodeFilter(): (node: NodeObject) => boolean;
