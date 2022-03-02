@@ -8,13 +8,14 @@ export default function({ nodes, links }, idAccessor, {
   const rootCandidates = {}
 
   nodes.forEach(node => {
-    rootCandidates[idAccessor(node)] = idAccessor(node)
-    graph[idAccessor(node)] = {
+    const nodeId = idAccessor(node)
+    graph[nodeId] = {
       data: node,
       out : [],
       depth: -1,
       skip: !nodeFilter(node)
     }
+    rootCandidates[nodeId] = graph[nodeId]
   });
   links.forEach(({ source, target }) => {
     const sourceId = getNodeId(source);
@@ -36,7 +37,7 @@ export default function({ nodes, links }, idAccessor, {
   const rootNodes = Object.values(rootCandidates)
   if (dagNodeSortingOrder == 'depthFirst') {
     traverseDepthFirst(rootNodes);
-  } else if(dagNodeSortingOrder == 'depthFirst') {
+  } else if(dagNodeSortingOrder == 'breadthFirst') {
     traverseBreadthFirst(rootNodes)
   } else {
     throw `Unsupported dagNodeSortingOrder: ${dagNodeSortingOrder}`
