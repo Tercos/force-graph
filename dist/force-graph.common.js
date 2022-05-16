@@ -1285,6 +1285,9 @@ var forceGraph = Kapsule__default["default"]({
     onBackgroundClick: {
       triggerUpdate: false
     },
+    onBackgroundMouseDown: {
+      triggerUpdate: false
+    },
     onBackgroundRightClick: {
       triggerUpdate: false
     },
@@ -1633,6 +1636,10 @@ var forceGraph = Kapsule__default["default"]({
           state.isPointerPressed = true; // track click state
 
           state.pointerDownEvent = ev;
+
+          if (state.onBackgroundMouseDown) {
+            state.onBackgroundMouseDown(ev);
+          }
         } // detect pointer drag on canvas pan
 
 
