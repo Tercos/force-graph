@@ -178,6 +178,7 @@ export default Kapsule({
     onLinkRightClick: { triggerUpdate: false },
     onLinkHover: { triggerUpdate: false },
     onBackgroundClick: { triggerUpdate: false },
+    onBackgroundMouseDown: { triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
     onZoom: { triggerUpdate: false },
     onZoomEnd: { triggerUpdate: false },
@@ -501,6 +502,9 @@ export default Kapsule({
         if (evType === 'pointerdown') {
           state.isPointerPressed = true; // track click state
           state.pointerDownEvent = ev;
+          if (state.onBackgroundMouseDown) {
+            state.onBackgroundMouseDown(ev)
+          }
         }
 
         // detect pointer drag on canvas pan

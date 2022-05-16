@@ -173,6 +173,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   linkHoverPrecision(): number;
   linkHoverPrecision(precision: number): ChainableInstance;
   onBackgroundClick(callback: (event: MouseEvent) => void): ChainableInstance;
+  onBackgroundMouseDown(callback: (event: MouseEvent) => void): ChainableInstance;
   onBackgroundRightClick(callback: (event: MouseEvent) => void): ChainableInstance;
   onZoom(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   onZoomEnd(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
