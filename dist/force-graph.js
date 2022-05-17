@@ -12083,7 +12083,7 @@
       state.zoom.filter(function (ev) {
         if (!ev.button && state.enableZoomPanInteraction && (state.enableZoomInteraction || ev.type !== 'wheel') && (state.enablePanInteraction || ev.type === 'wheel')) {
           if (ev.type == 'wheel') {
-            state.onManualZoom && state.onManualZoom(_objectSpread2(_objectSpread2({}, t), _this.centerAt()));
+            state.onManualZoom && state.onManualZoom();
           }
 
           return true;

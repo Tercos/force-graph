@@ -465,7 +465,7 @@ export default Kapsule({
           && (state.enableZoomInteraction || ev.type !== 'wheel')
           && (state.enablePanInteraction || ev.type === 'wheel')) {
             if(ev.type == 'wheel') {
-              state.onManualZoom && state.onManualZoom( { ...t, ...this.centerAt() } )
+              state.onManualZoom && state.onManualZoom()
             }
             return true
           }
