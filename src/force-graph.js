@@ -459,12 +459,19 @@ export default Kapsule({
     state.zoom.__baseElem.on('dblclick.zoom', null); // Disable double-click to zoom
 
     state.zoom
-      .filter(ev =>
+      .filter(ev => {
+        if(!ev.button
+          && state.enableZoomPanInteraction
+          && (state.enableZoomInteraction || ev.type !== 'wheel')
+          && (state.enablePanInteraction || ev.type === 'wheel')) {
+            if(ev.type == 'wheel') {
+              state.onManualZoom && state.onManualZoom( { ...t, ...this.centerAt() } )
+            }
+            return true
+          }
+          return false
+        }
         // disable zoom interaction
-        !ev.button
-        && state.enableZoomPanInteraction
-        && (state.enableZoomInteraction || ev.type !== 'wheel')
-        && (state.enablePanInteraction || ev.type === 'wheel')
       )
       .on('zoom', ev => {
         const t = ev.transform;
@@ -475,9 +482,6 @@ export default Kapsule({
         });
         state.onZoom && state.onZoom(ev.type, { ...t, ...this.centerAt() }); // report x,y coordinates relative to canvas center
         state.needsRedraw = true;
-      })
-      .on('wheel', ev => {
-        state.onManualZoom && state.onManualZoom( { ...t, ...this.centerAt() } )
       })
       .on('end', ev => state.onZoomEnd && state.onZoomEnd({ ...ev.transform, ...this.centerAt() }));
 

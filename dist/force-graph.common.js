@@ -1602,10 +1602,17 @@ var forceGraph = Kapsule__default["default"]({
 
 
     state.zoom.filter(function (ev) {
-      return (// disable zoom interaction
-        !ev.button && state.enableZoomPanInteraction && (state.enableZoomInteraction || ev.type !== 'wheel') && (state.enablePanInteraction || ev.type === 'wheel')
-      );
-    }).on('zoom', function (ev) {
+      if (!ev.button && state.enableZoomPanInteraction && (state.enableZoomInteraction || ev.type !== 'wheel') && (state.enablePanInteraction || ev.type === 'wheel')) {
+        if (ev.type == 'wheel') {
+          state.onManualZoom && state.onManualZoom(_objectSpread2(_objectSpread2({}, t), _this.centerAt()));
+        }
+
+        return true;
+      }
+
+      return false;
+    } // disable zoom interaction
+    ).on('zoom', function (ev) {
       var t = ev.transform;
       [ctx, shadowCtx].forEach(function (c) {
         resetTransform(c);
@@ -1615,8 +1622,6 @@ var forceGraph = Kapsule__default["default"]({
       state.onZoom && state.onZoom(ev.type, _objectSpread2(_objectSpread2({}, t), _this.centerAt())); // report x,y coordinates relative to canvas center
 
       state.needsRedraw = true;
-    }).on('wheel', function (ev) {
-      state.onManualZoom && state.onManualZoom(_objectSpread2(_objectSpread2({}, t), _this.centerAt()));
     }).on('end', function (ev) {
       return state.onZoomEnd && state.onZoomEnd(_objectSpread2(_objectSpread2({}, ev.transform), _this.centerAt()));
     });
