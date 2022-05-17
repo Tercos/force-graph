@@ -11770,6 +11770,9 @@
       onBackgroundRightClick: {
         triggerUpdate: false
       },
+      onManualZoom: {
+        triggerUpdate: false
+      },
       onZoom: {
         triggerUpdate: false
       },
@@ -12091,6 +12094,8 @@
         state.onZoom && state.onZoom(ev.type, _objectSpread2(_objectSpread2({}, t), _this.centerAt())); // report x,y coordinates relative to canvas center
 
         state.needsRedraw = true;
+      }).on('wheel', function (ev) {
+        state.onManualZoom && state.onManualZoom(_objectSpread2(_objectSpread2({}, t), _this.centerAt()));
       }).on('end', function (ev) {
         return state.onZoomEnd && state.onZoomEnd(_objectSpread2(_objectSpread2({}, ev.transform), _this.centerAt()));
       });

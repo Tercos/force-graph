@@ -180,6 +180,7 @@ export default Kapsule({
     onBackgroundClick: { triggerUpdate: false },
     onBackgroundMouseDown: { triggerUpdate: false },
     onBackgroundRightClick: { triggerUpdate: false },
+    onManualZoom: { triggerUpdate: false },
     onZoom: { triggerUpdate: false },
     onZoomEnd: { triggerUpdate: false },
     onRenderFramePre: { triggerUpdate: false },
@@ -474,6 +475,9 @@ export default Kapsule({
         });
         state.onZoom && state.onZoom(ev.type, { ...t, ...this.centerAt() }); // report x,y coordinates relative to canvas center
         state.needsRedraw = true;
+      })
+      .on('wheel', ev => {
+        state.onManualZoom && state.onManualZoom( { ...t, ...this.centerAt() } )
       })
       .on('end', ev => state.onZoomEnd && state.onZoomEnd({ ...ev.transform, ...this.centerAt() }));
 
