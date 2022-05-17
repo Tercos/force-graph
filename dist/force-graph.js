@@ -12098,7 +12098,7 @@
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
-        state.onZoom && state.onZoom(ev.type, _objectSpread2(_objectSpread2({}, t), _this.centerAt())); // report x,y coordinates relative to canvas center
+        state.onZoom && state.onZoom(_objectSpread2(_objectSpread2({}, t), _this.centerAt())); // report x,y coordinates relative to canvas center
 
         state.needsRedraw = true;
       }).on('end', function (ev) {

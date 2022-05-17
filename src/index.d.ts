@@ -176,7 +176,7 @@ export interface ForceGraphGenericInstance<ChainableInstance> {
   onBackgroundMouseDown(callback: (event: MouseEvent) => void): ChainableInstance;
   onBackgroundRightClick(callback: (event: MouseEvent) => void): ChainableInstance;
   onManualZoom(callback: () => void): ChainableInstance;
-  onZoom(callback: (type: any, transform: {k: number, x: number, y: number}) => void): ChainableInstance;
+  onZoom(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   onZoomEnd(callback: (transform: {k: number, x: number, y: number}) => void): ChainableInstance;
   enableNodeDrag(): boolean;
   enableNodeDrag(enable: boolean): ChainableInstance;
