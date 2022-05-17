@@ -472,7 +472,7 @@ export default Kapsule({
           c.translate(t.x, t.y);
           c.scale(t.k, t.k);
         });
-        state.onZoom && state.onZoom({ ...t, ...this.centerAt() }); // report x,y coordinates relative to canvas center
+        state.onZoom && state.onZoom(ev.type, { ...t, ...this.centerAt() }); // report x,y coordinates relative to canvas center
         state.needsRedraw = true;
       })
       .on('end', ev => state.onZoomEnd && state.onZoomEnd({ ...ev.transform, ...this.centerAt() }));
